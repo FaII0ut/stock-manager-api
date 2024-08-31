@@ -21,7 +21,7 @@ class ItemFactory extends Factory
             'sku' => fake()->ean8(),
             'description' => fake()->text(),
             'price' => fake()->randomFloat(2, 0, 1000),
-            'stock' => fake()->numberBetween(0, 100),
+            'stock' => fake()->numberBetween(10, 100),
         ];
     }
 }
