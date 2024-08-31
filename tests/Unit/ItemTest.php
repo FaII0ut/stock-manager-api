@@ -15,7 +15,7 @@ class ItemTest extends TestCase
     public function test_item_creation_works(): void
     {
         $this->withoutExceptionHandling();
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $itemData = Item::factory()->make()->toArray();
         $response = $this->postJson('api/items/', $itemData);
 
@@ -30,7 +30,7 @@ class ItemTest extends TestCase
 
     public function test_item_update_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $itemData = Item::factory()->create()->toArray();
         $newItemData = Item::factory()->make()->toArray();
         unset($newItemData['id']);
@@ -42,7 +42,7 @@ class ItemTest extends TestCase
 
     public function test_item_type_listing_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         Item::factory()->create()->toArray();
         $response = $this->getJson('api/items');
         $response->assertStatus(200)
@@ -79,7 +79,7 @@ class ItemTest extends TestCase
 
     public function test_item_delete_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $itemId = Item::factory()->create()->toArray()['id'];
 
         $deleteResponse = $this->deleteJson("/api/items/{$itemId}");

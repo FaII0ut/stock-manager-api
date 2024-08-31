@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class StaffTest extends TestCase
     public function test_staff_creation_works(): void
     {
         $this->withoutExceptionHandling();
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $staffData = Staff::factory()->make()->toArray();
         $response = $this->postJson('api/staff/', $staffData);
 
@@ -29,7 +30,7 @@ class StaffTest extends TestCase
 
     public function test_staff_update_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $staffData = Staff::factory()->create()->toArray();
         $newStaffData = Staff::factory()->make()->toArray();
         unset($newStaffData['id']);
@@ -41,7 +42,7 @@ class StaffTest extends TestCase
 
     public function test_staff_type_listing_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         Staff::factory()->create()->toArray();
         $response = $this->getJson('api/staff');
         $response->assertStatus(200)
@@ -76,7 +77,7 @@ class StaffTest extends TestCase
 
     public function test_staff_delete_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $staffId = Staff::factory()->create()->toArray()['id'];
 
         $deleteResponse = $this->deleteJson("/api/staff/{$staffId}");

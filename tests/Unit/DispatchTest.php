@@ -17,7 +17,7 @@ class DispatchTest extends TestCase
     public function test_dispatch_creation_works(): void
     {
         $this->withoutExceptionHandling();
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $dispatchData = Dispatch::factory()->make()->toArray();
         Item::find($dispatchData['item_id'])->increment('stock', $dispatchData['quantity']);
         $response = $this->postJson('api/dispatches/', $dispatchData);
@@ -35,7 +35,7 @@ class DispatchTest extends TestCase
 
     public function test_dispatch_update_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $dispatchData = Dispatch::factory()->create()->toArray();
         $newDispatchData = Dispatch::factory()->make()->toArray();
         unset($newDispatchData['id']);
@@ -47,7 +47,7 @@ class DispatchTest extends TestCase
 
     public function test_dispatch_type_listing_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         Dispatch::factory()->create()->toArray();
         $response = $this->getJson('api/dispatches');
         $response->assertStatus(200)
@@ -81,7 +81,7 @@ class DispatchTest extends TestCase
 
     public function test_dispatch_delete_works(): void
     {
-        // Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
         $dispatchId = Dispatch::factory()->create()->toArray()['id'];
 
         $deleteResponse = $this->deleteJson("/api/dispatches/{$dispatchId}");
