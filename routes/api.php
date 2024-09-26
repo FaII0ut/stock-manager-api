@@ -25,4 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('items', ItemController::class);
     Route::resource('staff', StaffController::class);
     Route::resource('dispatches', DispatchController::class);
+
+    Route::get('dispatches/export/json', [DispatchController::class, 'exportMonthlyJson']);
+    Route::get('dispatches/export/csv', [DispatchController::class, 'exportMonthlyCsv']);
 });
