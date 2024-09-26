@@ -8,6 +8,7 @@ use App\Http\Resources\DispatchResource;
 use App\Models\Dispatch;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DispatchController extends Controller
 {
@@ -19,7 +20,12 @@ class DispatchController extends Controller
 
     public function store(StoreDispatchRequest $request)
     {
-        $dispatch = Dispatch::create($request->validated());
+        $validatedData = $request->validated();
+        // Add user_id to the validated data
+        $validatedData['user_id'] = Auth::id();
+
+        $dispatch = Dispatch::create($validatedData);
+
         Item::find($request->get('item_id'))->decrement('stock', $request->get('quantity'));
 
         return new DispatchResource($dispatch);

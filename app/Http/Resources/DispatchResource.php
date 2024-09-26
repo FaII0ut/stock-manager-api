@@ -16,8 +16,9 @@ class DispatchResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'item' => $this->item,
-            'staff' => $this->staff,
+            'user' => new UserResource($this->user),
+            'item' => new ItemResource($this->item),
+            'staff' => new StaffResource($this->staff),
             'quantity' => $this->quantity,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

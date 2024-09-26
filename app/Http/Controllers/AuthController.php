@@ -16,7 +16,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $user->token = app()->isProduction() ? $request->session()->regenerate() : $user->createToken('authToken')->plainTextToken;
 
-            return UserResource::make($user);
+            return $user;
         }
 
         return response()->json(['error' => 'We apologize, but the credentials provided are not valid.'], 401);
