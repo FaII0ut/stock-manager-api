@@ -10,9 +10,31 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return ItemResource::collection(Item::query()->latest('id')->paginate());
+        $query = Item::query();
+
+        // Single search parameter
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('sku', 'like', '%' . $search . '%')
+                  ->orWhere('name', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Sort results
+        $sortBy = $request->input('sort_by', 'id');
+        $sortOrder = $request->input('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Paginate results
+        $perPage = $request->input('per_page', 15);
+        $items = $query->paginate();
+
+        return ItemResource::collection($items);
+
     }
 
     public function store(StoreItemRequest $request)
