@@ -15,7 +15,7 @@ class AuthController extends Controller
         if (Auth::attempt($request->validated())) {
             $user = Auth::user();
             $user->token = app()->isProduction() ? $request->session()->regenerate() : $user->createToken('authToken')->plainTextToken;
-
+            // dd($user);
             return $user;
         }
 
