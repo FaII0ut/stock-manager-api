@@ -23,6 +23,7 @@ class DispatchController extends Controller
     {
         $validatedData = $request->validated();
         // Add user_id to the validated data
+
         $validatedData['user_id'] = Auth::id();
 
         $dispatch = Dispatch::create($validatedData);

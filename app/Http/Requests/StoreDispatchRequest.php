@@ -23,9 +23,12 @@ class StoreDispatchRequest extends FormRequest
                 'min:1',
                 function ($attribute, $value, $fail) {
                     $item = Item::find(request()->get('item_id'));
-                    if ($item->stock < $value) {
+                    if ($item === null) {
+                        $fail('The selected item does not exist.');
+                    } elseif ($item->stock < $value) {
                         $fail('The quantity must not be greater than the available stock of the item.');
                     }
+
                 },
             ],
         ];
