@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('dispatches', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignId('user_id')->constrained();
             $table->foreignUlid('staff_id')->constrained('staff');
             $table->foreignUlid('item_id')->constrained('items');
             $table->integer('quantity');
