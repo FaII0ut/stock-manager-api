@@ -92,9 +92,29 @@ class ItemController extends Controller
     {
         $data = $this->getItemsData($request);
 
+        $formattedItems = $data['items']->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'sku' => $item->sku,
+                'category' => $item->category ? [
+                    'id' => $item->category->id,
+                    'name' => $item->category->name,
+                ] : null,
+                'name' => $item->name,
+                'code' => $item->code? $item->code : null,
+                'description' => $item->description,
+                'price' => $item->price,
+                'stock' => $item->stock,
+                'minimum_count' => $item->minimum_count,
+                'status' => $item->status,
+
+                'created_at' => $item->created_at,
+            ];
+        });
+
         return response()->json([
             'summary' => $data['summary'],
-            'items' => $data['items']
+            'items' => $formattedItems
         ]);
     }
 
@@ -131,7 +151,7 @@ class ItemController extends Controller
                     $item->id,
                     $item->category ? $item->category->name : 'N/A',
                     $item->sku,
-                    $item->code,
+                    $item->code? $item->code : null,
                     $item->name,
                     $item->description,
                     $item->price,
@@ -152,9 +172,6 @@ class ItemController extends Controller
     private function getItemsData(Request $request)
     {
         $request->validate([
-            'status' => 'nullable|boolean',
-            'min_stock' => 'nullable|numeric|min:0',
-            'max_stock' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:categories,id',
         ]);
 

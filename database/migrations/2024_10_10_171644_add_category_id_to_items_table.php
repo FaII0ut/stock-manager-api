@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->foreignId('category_id')->nullable()->constrained()->after('id');
+            $table->foreignId('category_id')->nullable()->constrained()->after('sku');
         });
     }
 
