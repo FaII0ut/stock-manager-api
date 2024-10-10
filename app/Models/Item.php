@@ -14,9 +14,17 @@ class Item extends Model
     protected $fillable = [
         'sku',
         'name',
+        'code',
         'description',
         'price',
-        'status',
         'stock',
+        'minimum_count',
+        'status',
+        'category_id'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
