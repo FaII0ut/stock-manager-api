@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DispatchController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StaffController;
@@ -21,10 +22,13 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('/items/minimum-stock-stats', [ItemController::class, 'minimumStockStats'])->name('items.minimum-stock-stats');
+
     Route::resource('users', UserController::class);
     Route::resource('items', ItemController::class);
     Route::resource('staff', StaffController::class);
     Route::resource('dispatches', DispatchController::class);
+    Route::resource('categories', CategoryController::class);
 
     Route::get('dispatches/export/json', [DispatchController::class, 'exportMonthlyJson']);
     Route::get('dispatches/export/csv', [DispatchController::class, 'exportMonthlyCsv']);

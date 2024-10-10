@@ -62,4 +62,32 @@ class ItemController extends Controller
 
         return response()->noContent();
     }
+
+    public function minimumStockStats()
+    {
+        $itemsWithMinimumStock = Item::whereNotNull('minimum_count')
+            ->get();
+
+        return ItemResource::collection($itemsWithMinimumStock);
+    }
+
+    // public function minimumStockStats()
+    // {
+    //     $itemsWithMinimumStock = Item::whereNotNull('minimum_count')
+    //         ->where('stock', '<=', 'minimum_count')
+    //         ->get();
+
+    //     $totalItems = $itemsWithMinimumStock->count();
+    //     $itemsBelowMinimum = $itemsWithMinimumStock->filter(function ($item) {
+    //         return $item->stock < $item->minimum_count;
+    //     })->count();
+
+    //     return response()->json([
+    //         'total_items_with_minimum_stock' => $totalItems,
+    //         'items_below_minimum_stock' => $itemsBelowMinimum,
+    //         'items' => ItemResource::collection($itemsWithMinimumStock),
+    //     ]);
+    // }
+
+
 }
