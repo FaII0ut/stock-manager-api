@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateItemRequest;
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ItemController extends Controller
 {
@@ -65,10 +66,7 @@ class ItemController extends Controller
 
     public function minimumStockStats()
     {
-        $itemsWithMinimumStock = Item::whereNotNull('minimum_count')
-            ->get();
-
-        return ItemResource::collection($itemsWithMinimumStock);
+        return Item::whereNotNull('minimum_count')->get();
     }
 
     // public function minimumStockStats()
@@ -90,4 +88,100 @@ class ItemController extends Controller
     // }
 
 
+    public function exportItemsJson(Request $request)
+    {
+        $data = $this->getItemsData($request);
+
+        return response()->json([
+            'summary' => $data['summary'],
+            'items' => $data['items']
+        ]);
+    }
+
+    public function exportItemsCsv(Request $request)
+    {
+        $data = $this->getItemsData($request);
+
+        $filename = "items_export.csv";
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['ID', 'Category', 'SKU', 'Code', 'Name', 'Description', 'Price', 'Stock', 'Minimum Count', 'Status', 'Created At', 'Updated At'];
+
+        $callback = function () use ($data, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Summary']);
+            fputcsv($file, ['Total Items', $data['summary']['total_items']]);
+            fputcsv($file, ['Active Items', $data['summary']['active_items']]);
+            fputcsv($file, ['Total Stock', $data['summary']['total_stock']]);
+            fputcsv($file, ['Total Value', $data['summary']['total_value']]);
+            fputcsv($file, ['Items Below Minimum Count', $data['summary']['items_below_minimum']]);
+            fputcsv($file, []); // Empty line
+            fputcsv($file, ['Items']);
+            fputcsv($file, $columns);
+
+            foreach ($data['items'] as $item) {
+                fputcsv($file, [
+                    $item->id,
+                    $item->category ? $item->category->name : 'N/A',
+                    $item->sku,
+                    $item->code,
+                    $item->name,
+                    $item->description,
+                    $item->price,
+                    $item->stock,
+                    $item->minimum_count,
+                    $item->status ? 'Active' : 'Inactive',
+                    $item->created_at,
+                    $item->updated_at
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    private function getItemsData(Request $request)
+    {
+        $request->validate([
+            'status' => 'nullable|boolean',
+            'min_stock' => 'nullable|numeric|min:0',
+            'max_stock' => 'nullable|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $query = Item::with('category');
+
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        $items = $query->get();
+
+        $summary = [
+            'total_items' => $items->count(),
+            'active_items' => $items->where('status', true)->count(),
+            'total_stock' => $items->sum('stock'),
+            'total_value' => $items->sum(function ($item) {
+                return $item->stock * $item->price;
+            }),
+            'items_below_minimum' => $items->filter(function ($item) {
+                return $item->minimum_count !== null && $item->stock < $item->minimum_count;
+            })->count(),
+        ];
+
+        return [
+            'summary' => $summary,
+            'items' => $items
+        ];
+    }
 }

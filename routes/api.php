@@ -23,6 +23,8 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/items/minimum-stock-stats', [ItemController::class, 'minimumStockStats'])->name('items.minimum-stock-stats');
+    Route::get('/items/export/json', [ItemController::class, 'exportItemsJson']);
+    Route::get('/items/export/csv', [ItemController::class, 'exportItemsCsv']);
 
     Route::resource('users', UserController::class);
     Route::resource('items', ItemController::class);
