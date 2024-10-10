@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateItemRequest extends FormRequest
 {
@@ -15,12 +16,16 @@ class UpdateItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sku' => ['numeric', 'min:0'],
+            'sku' => [
+                'string',
+                Rule::unique('items')->ignore($this->item),
+            ],
             'name' => ['string', 'max:255'],
-            'description' => ['string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:255'],
             'price' => ['numeric', 'min:0'],
-            'stock' => ['numeric', 'min:0'],
-            'status' => ['boolean', 'min:0'],
+            'stock' => ['integer', 'min:0'],
+            'status' => ['boolean'],
+            'category_id' => ['integer', 'exists:categories,id'],
         ];
     }
 }

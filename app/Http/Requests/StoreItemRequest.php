@@ -14,12 +14,13 @@ class StoreItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sku' => ['required', 'numeric', 'min:0'],
+            'sku' => ['required', 'string', 'unique:items,sku'],
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['string', 'max:255'],
-            'price' => ['numeric', 'min:0'],
-            'stock' => ['numeric', 'min:0'],
-            'status' => ['boolean', 'min:0'],
+            'description' => ['nullable', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'boolean'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
         ];
     }
 }
