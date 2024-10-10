@@ -10,6 +10,7 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\DB;
 
 class DispatchController extends Controller
 {
@@ -40,16 +41,27 @@ class DispatchController extends Controller
 
     public function update(UpdateDispatchRequest $request, Dispatch $dispatch)
     {
-        Item::find($request->get('item_id'))->increment('stock', $dispatch->quantity);
+        // First, revert the original dispatch by incrementing the stock
+        Item::find($dispatch->item_id)->increment('stock', $dispatch->quantity);
+
+        // Update the dispatch with new data
         $dispatch->update($request->validated());
-        Item::find($request->get('item_id'))->decrement('stock', $request->get('quantity'));
+
+        // Now, apply the new dispatch by decrementing the stock
+        Item::find($dispatch->item_id)->decrement('stock', $dispatch->quantity);
 
         return new DispatchResource($dispatch);
     }
 
     public function destroy(Dispatch $dispatch)
     {
-        $dispatch->delete();
+        DB::transaction(function () use ($dispatch) {
+            // Increment the stock of the associated item
+            Item::find($dispatch->item_id)->increment('stock', $dispatch->quantity);
+
+            // Delete the dispatch
+            $dispatch->delete();
+        });
 
         return response()->noContent();
     }
