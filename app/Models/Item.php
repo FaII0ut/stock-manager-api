@@ -12,12 +12,14 @@ class Item extends Model
     use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
-        'category_id',
         'sku',
         'name',
+        'code',
         'description',
         'price',
-        'status',
         'stock',
+        'minimum_count',
+        'status',
+        'category_id'
     ];
 }

@@ -21,9 +21,11 @@ class UpdateItemRequest extends FormRequest
                 Rule::unique('items')->ignore($this->item),
             ],
             'name' => ['string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
             'price' => ['numeric', 'min:0'],
             'stock' => ['integer', 'min:0'],
+            'minimum_count' => ['nullable', 'integer', 'min:0'],
             'status' => ['boolean'],
             'category_id' => ['integer', 'exists:categories,id'],
         ];
