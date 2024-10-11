@@ -127,17 +127,20 @@ class DispatchController extends Controller
         $request->validate([
             'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'month' => 'required|integer|min:1|max:12',
-            'staff_id' => 'nullable|exists:users,id'
+            'staff_id' => 'nullable|exists:users,id',
+            'category_id' => 'nullable|exists:categories,id'
         ]);
 
         $year = $request->input('year');
         $month = $request->input('month');
-        $staffId = $request->input('staff_id');
+        $staffId = $request->input('staff_id')??null;
+        $categoryId = $request->input('category_id')??null;
 
         $query = Dispatch::query()
             ->join('users', 'dispatches.user_id', '=', 'users.id')
             ->join('staff', 'dispatches.staff_id', '=', 'staff.id')
             ->join('items', 'dispatches.item_id', '=', 'items.id')
+            ->join('categories', 'items.category_id', '=', 'categories.id')
             ->whereYear('dispatches.created_at', $year)
             ->whereMonth('dispatches.created_at', $month)
             ->select(
@@ -145,6 +148,7 @@ class DispatchController extends Controller
                 'users.name as user_name',
                 'staff.name as staff_name',
                 'items.id as item_id',
+                'categories.name as category',
                 'items.name as item_name',
                 'dispatches.quantity',
                 'dispatches.created_at'
@@ -152,6 +156,9 @@ class DispatchController extends Controller
 
         if ($staffId) {
             $query->where('dispatches.user_id', $staffId);
+        }
+        if ($categoryId) {
+            $query->where('items.category_id', $categoryId);
         }
 
         $dispatches = $query->get();

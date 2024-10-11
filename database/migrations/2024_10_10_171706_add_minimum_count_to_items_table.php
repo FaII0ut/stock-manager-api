@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->integer('minimum_count')->nullable()->after('stock');
+            $table->integer('min_count')->nullable()->after('stock');
             $table->string('code')->nullable()->after('name');
         });
     }
@@ -22,7 +22,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->dropColumn('minimum_count');
+            $table->dropColumn('min_count');
             $table->dropColumn('code');
         });
     }

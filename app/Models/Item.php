@@ -18,7 +18,7 @@ class Item extends Model
         'description',
         'price',
         'stock',
-        'minimum_count',
+        'min_count',
         'status',
         'category_id'
     ];

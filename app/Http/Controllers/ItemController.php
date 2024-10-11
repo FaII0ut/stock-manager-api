@@ -13,7 +13,7 @@ class ItemController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Item::query();
+        $query = Item::with('category')->query();
 
         // Single search parameter
         if ($request->has('search')) {
@@ -66,18 +66,18 @@ class ItemController extends Controller
 
     public function minimumStockStats()
     {
-        return Item::whereNotNull('minimum_count')->get();
+        return Item::whereNotNull('min_count')->get();
     }
 
     // public function minimumStockStats()
     // {
-    //     $itemsWithMinimumStock = Item::whereNotNull('minimum_count')
-    //         ->where('stock', '<=', 'minimum_count')
+    //     $itemsWithMinimumStock = Item::whereNotNull('min_count')
+    //         ->where('stock', '<=', 'min_count')
     //         ->get();
 
     //     $totalItems = $itemsWithMinimumStock->count();
     //     $itemsBelowMinimum = $itemsWithMinimumStock->filter(function ($item) {
-    //         return $item->stock < $item->minimum_count;
+    //         return $item->stock < $item->min_count;
     //     })->count();
 
     //     return response()->json([
@@ -105,7 +105,7 @@ class ItemController extends Controller
                 'description' => $item->description,
                 'price' => $item->price,
                 'stock' => $item->stock,
-                'minimum_count' => $item->minimum_count,
+                'min_count' => $item->min_count,
                 'status' => $item->status,
 
                 'created_at' => $item->created_at,
@@ -156,7 +156,7 @@ class ItemController extends Controller
                     $item->description,
                     $item->price,
                     $item->stock,
-                    $item->minimum_count,
+                    $item->min_count,
                     $item->status ? 'Active' : 'Inactive',
                     $item->created_at,
                     $item->updated_at
@@ -192,7 +192,7 @@ class ItemController extends Controller
                 return $item->stock * $item->price;
             }),
             'items_below_minimum' => $items->filter(function ($item) {
-                return $item->minimum_count !== null && $item->stock < $item->minimum_count;
+                return $item->min_count !== null && $item->stock < $item->min_count;
             })->count(),
         ];
 

@@ -25,7 +25,7 @@ class UpdateItemRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:255'],
             'price' => ['numeric', 'min:0'],
             'stock' => ['integer', 'min:0'],
-            'minimum_count' => ['nullable', 'integer', 'min:0'],
+            'min_count' => ['nullable', 'integer', 'min:0'],
             'status' => ['boolean'],
             'category_id' => ['integer', 'exists:categories,id'],
         ];
