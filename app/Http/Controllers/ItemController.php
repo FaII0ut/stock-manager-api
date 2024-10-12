@@ -13,7 +13,7 @@ class ItemController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Item::with('category')->query();
+        $query = Item::query()->with('category');
 
         // Single search parameter
         if ($request->has('search')) {
